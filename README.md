@@ -1,23 +1,27 @@
 # Callout Toggles
 
-An [Obsidian plugin](https://obsidian.md/plugins?id=callout-toggles) to quickly add, switch, or remove callouts in your notes. Provides a separate command for every possible callout type, so you can easily assign hotkeys for your favorite callouts.
+[![Obsidian logo badge](https://img.shields.io/badge/Obsidian-%23483699.svg?&logo=obsidian&logoColor=white)](https://obsidian.md/plugins?id=callout-toggles) [![Number of downloads badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&query=$["callout-toggles"].downloads&label=downloads)](https://obsidian.md/plugins?id=callout-toggles)
+
+An [Obsidian plugin](https://obsidian.md/plugins?id=callout-toggles) to quickly add, switch, or remove callout blocks in your notes with convenient commands. Provides a separate command for every callout type, so you can easily assign hotkeys for your favorite callouts.
 
 ![Switching between callout types demonstration](./readme_gifs/main-demo-switching.gif)
 
 ## Features
 
-- Quickly insert or remove a callout of your choice with a single command
-- Insert a fresh callout, or wrap existing text in a callout
-- Retains [custom titles](#retaining-custom-titles) when wrapping or removing callouts
-- Supports [custom callouts](#custom-callouts-callout-manager) (automatically syncs with [Callout Manager] if installed)
-- Configurable settings for default formatting, foldable callouts, and more
+- Without leaving your keyboard:
+  - Insert a fresh (blank) callout, or turn existing text into a callout
+  - Remove a callout, turning it back into regular text
+  - Switch the type of an existing callout
+- [Retain custom titles](#retaining-custom-titles) when wrapping or removing callouts
+- Works with your [custom callout types](#custom-callouts-callout-manager) (automatically syncs with [Callout Manager] if installed)
+- Settings for formatting, auto-selection, foldable callouts, and more
 
 ## Table of contents
 
 1. [Features](#features)
 2. [Table of contents](#table-of-contents)
 3. [Commands provided](#commands-provided)
-   1. [Wrap lines in X callout](#wrap-lines-in-x-callout)
+   1. [Wrap lines in ... callout](#wrap-lines-in--callout)
    2. [Remove callout from selected lines](#remove-callout-from-selected-lines)
 4. [Usage examples](#usage-examples)
    1. [Inserting a fresh callout](#inserting-a-fresh-callout)
@@ -26,20 +30,19 @@ An [Obsidian plugin](https://obsidian.md/plugins?id=callout-toggles) to quickly 
    4. [Removing a callout](#removing-a-callout)
    5. [Retaining custom titles](#retaining-custom-titles)
 5. [Custom callouts (Callout Manager)](#custom-callouts-callout-manager)
-6. [Related plugins](#related-plugins)
-7. [Feedback](#feedback)
-8. [Appreciation](#appreciation)
+6. [Feedback](#feedback)
+7. [Appreciation](#appreciation)
 
 ## Commands provided
 
-Two types of commands are provided: `Wrap lines in X callout` and `Remove callout from selected lines`. Using them together, you can easily change the type of an existing callout.
+Two types of commands are provided: `Wrap lines in ... callout` (where `...` is a callout type) and `Remove callout from selected lines`. Using them together, you can easily switch the type of an existing callout.
 
 > [!TIP]
 > Both commands work on full lines of text, so your cursor position within a given line doesn't matter. As long as part of a line is selected, the entire line will be included.
 
-### Wrap lines in X callout
+### Wrap lines in ... callout
 
-One `Wrap lines in X callout` command is provided for every possible callout type `X` (❞ Quote, ⚠ Warning, 🔥 Tip, 🐞 Bug, 📝 Note, etc.), so that you can assign separate hotkeys for each of your favorite callouts. This can be used both for inserting fresh callouts, and for turning existing text into callouts.
+One `Wrap lines in ... callout` command is provided for every possible callout type (❞ Quote, ⚠ Warning, 🔥 Tip, 🐞 Bug, 📝 Note, etc.), so that you can assign separate hotkeys for each of your favorite callouts. This can be used both for inserting fresh callouts, and for turning existing text into callouts.
 
 ### Remove callout from selected lines
 
@@ -52,7 +55,7 @@ This will remove the callout syntax from the selected lines, turning the callout
 
 ### Inserting a fresh callout
 
-To insert a fresh callout of your choice, simply run `Wrap lines in X callout` on a blank line:
+To insert a fresh callout of your choice, simply run `Wrap lines in ... callout` on a blank line:
 
 ![Inserting a fresh callout](./readme_gifs/usage_examples/0-insert-fresh.gif)
 
@@ -64,7 +67,7 @@ If the current line is not blank and nothing is selected, the current line will 
 
 ### Wrapping multiple lines
 
-To turn multiple lines of text into a callout, first select the lines, and then  run `Wrap lines in X callout`:
+To turn multiple lines of text into a callout, first select the lines, and then  run `Wrap lines in ... callout`:
 
 ![Wrapping multiple lines in a callout](./readme_gifs/usage_examples/2-multi-line.gif)
 
@@ -76,38 +79,25 @@ To turn a callout back into regular text, run `Remove callout from selected line
 
 ### Retaining custom titles
 
-If a callout has a default title (e.g. `> [!quote] Quote`), the entire header line will be removed when calling `Remove callout from selected lines`. If a custom title is present (e.g. `> [!quote] Aristotle`), it will be retained as a Markdown heading, so that you don't lose your hard work in choosing that title.
+If a callout has a default title (e.g. `> [!quote] Quote`), the entire header line will be removed when calling `Remove callout from selected lines`. But if a custom title is present (e.g. `> [!quote] Aristotle`), it will be retained as a Markdown heading, so that you don't lose your hard work in choosing that title.
 
-If you call `Wrap lines in X callout` on a selection whose first line is a Markdown heading, the heading will be used as the custom title for the new callout block:
-
-![Retaining custom titles](./readme_gifs/usage_examples/4a-custom-title.gif)
-
-This makes it easy to switch between callout types while retaining your custom titles:
+Likewise, if you call `Wrap lines in ... callout` on a selection whose first line is a Markdown heading, the heading will be used as the custom title for the new callout block. This makes it easy to switch between callout types while retaining your custom titles, by calling `Remove` and then `Wrap`:
 
 ![Retaining custom titles while switching between callout types](./readme_gifs/usage_examples/4b-custom-title-fast.gif)
 
 ## Custom callouts (Callout Manager)
 
-This plugin automatically integrates with the [Callout Manager] plugin, if you have it installed. This means that the callout types available in this plugin will be automatically synced with your custom callout types in Callout Manager.
+This plugin automatically integrates with the [Callout Manager] plugin, if you have it installed. This means that even your custom callout types get their own `Wrap` commands.
 
-If you don't have Callout Manager installed, [no worries](https://www.youtube.com/watch?v=4P-YBqVzJg0)—this plugin will still work as expected. A default set of callout types will be available for you to use.
-
-## Related plugins
-
-As mentioned above, you can use [Callout Manager] (by [eth-p]) to customize how Obsidian handles callouts—e.g. adjust callout colors/icons, add your own custom callouts, etc.
-
-If you'd like to be able to insert a fresh callout by choosing from a styled (with icons!) dropdown of callout types, you can also consider installing either/both:
-
-1. [Personal Assistant](https://github.com/edonyzpc/personal-assistant) (by [edonyzpc](https://github.com/edonyzpc/)): Shows dropdown when running command "List callout for quickly insert"
-2. [Callout Suggestions](https://github.com/cwfryer/obsidian-callout-suggestions) (by [cwfryer](https://github.com/cwfryer/)): Shows inline dropdown when typing `>!`
+If you don't have Callout Manager installed, [no worries](https://www.youtube.com/watch?v=4P-YBqVzJg0), this plugin will still work as expected. A default set of callout types will be available for you to use.
 
 ## Feedback
 
-If you have any feedback or suggestions, feel free to [open an issue](https://github.com/alythobani/obsidian-callout-toggles/issues) and I'd be happy to take a look when I can.
+If you have any feedback or suggestions, feel free to [open an issue](https://github.com/alythobani/obsidian-callout-toggles/issues) and I'd be happy to take a look when I can; although my availability may be limited.
 
 ## Appreciation
 
-Thanks to the creators of Obsidian, seriously an awesome note-taking app! And big thanks to [eth-p] for providing a [Callout Manager API](https://github.com/eth-p/obsidian-callout-manager/tree/master/api)—super cool.
+Thanks to the creators of Obsidian, seriously an awesome note-taking app! And big thanks to [eth-p] for providing a [Callout Manager API](https://github.com/eth-p/obsidian-callout-manager/tree/master/api)—super cool and very useful here.
 
 [Callout Manager]: https://github.com/eth-p/obsidian-callout-manager/
 [eth-p]: https://github.com/eth-p/
