@@ -1,20 +1,21 @@
-import { type Editor, type EditorPosition } from "obsidian";
-import { type CalloutID } from "obsidian-callout-manager";
-import { type PluginSettingsManager } from "../../pluginSettingsManager";
-import { type AutoSelectionWhenNothingSelectedMode } from "../../settings/autoSelectionModes";
+import type { PluginSettingsManager } from "../../pluginSettingsManager";
+import type { AutoSelectionWhenNothingSelectedMode } from "../../settings/autoSelectionModes";
+import type { CalloutHeaderParts } from "../../utils/calloutTitleUtils";
+import type {
+  CursorOrSelectionAction,
+  SetCursorAction,
+  SetSelectionAction,
+} from "../../utils/selectionUtils";
+import type { Editor, EditorPosition } from "obsidian";
+import type { CalloutID } from "obsidian-callout-manager";
+
 import {
-  type CalloutHeaderParts,
   constructCalloutHeaderFromParts,
   getNewCalloutHeaderParts,
   getTitleRange,
 } from "../../utils/calloutTitleUtils";
 import { throwNever } from "../../utils/errorUtils";
-import {
-  type CursorOrSelectionAction,
-  runCursorOrSelectionAction,
-  type SetCursorAction,
-  type SetSelectionAction,
-} from "../../utils/selectionUtils";
+import { runCursorOrSelectionAction } from "../../utils/selectionUtils";
 
 /**
  * Wraps the cursor's current line in a callout.
@@ -33,7 +34,7 @@ export function wrapCurrentLineInCallout({
   const oldLineText = editor.getLine(line);
   const calloutHeaderParts = getNewCalloutHeaderParts({
     calloutID,
-    maybeTitleFromHeading: null,
+    maybeTitleFromHeading: undefined,
     pluginSettingsManager,
   });
   const calloutHeader = constructCalloutHeaderFromParts(calloutHeaderParts);
@@ -120,21 +121,6 @@ export function getCursorOrSelectionActionAfterWrappingCurrentLine({
 }
 
 /**
- * Selects the full callout after wrapping the current line in a callout.
- */
-function getSelectFullCalloutAction({
-  oldCursor,
-  oldLineText,
-}: {
-  oldCursor: EditorPosition;
-  oldLineText: string;
-}): SetSelectionAction {
-  const newFrom = { line: oldCursor.line, ch: 0 };
-  const newTo = { line: oldCursor.line + 1, ch: oldLineText.length + 2 };
-  return { type: "setSelection", newRange: { from: newFrom, to: newTo } };
-}
-
-/**
  * Selects from the start of the callout header to the cursor's original relative position within
  * the text.
  */
@@ -149,6 +135,21 @@ function getSelectHeaderToCursorAction({
   // TODO: If the user is in insert mode or non-vim mode, we should only add 2 to the cursor's ch
   const newToCh = Math.min(oldCursor.ch + 3, oldLineText.length + 2);
   const newTo = { line: oldCursor.line + 1, ch: newToCh };
+  return { type: "setSelection", newRange: { from: newFrom, to: newTo } };
+}
+
+/**
+ * Selects the full callout after wrapping the current line in a callout.
+ */
+function getSelectFullCalloutAction({
+  oldCursor,
+  oldLineText,
+}: {
+  oldCursor: EditorPosition;
+  oldLineText: string;
+}): SetSelectionAction {
+  const newFrom = { line: oldCursor.line, ch: 0 };
+  const newTo = { line: oldCursor.line + 1, ch: oldLineText.length + 2 };
   return { type: "setSelection", newRange: { from: newFrom, to: newTo } };
 }
 

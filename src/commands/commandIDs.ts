@@ -1,4 +1,4 @@
-import { type CalloutID } from "obsidian-callout-manager";
+import type { CalloutID } from "obsidian-callout-manager";
 
 /**
  * Returns the full command ID for wrapping the current line or selected lines in the given callout.

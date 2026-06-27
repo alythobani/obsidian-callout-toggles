@@ -1,15 +1,16 @@
-import { type Command, type Plugin } from "obsidian";
-import { type CalloutID } from "obsidian-callout-manager";
+import type { CalloutManagerOwnedHandle } from "./callouts/calloutManager";
+import type { PluginSettingsManager } from "./pluginSettingsManager";
+import type { Command, Plugin } from "obsidian";
+import type { CalloutID } from "obsidian-callout-manager";
+
 import { BUILTIN_CALLOUT_IDS } from "./callouts/builtinCallouts";
 import {
-  type CalloutManagerOwnedHandle,
   getCalloutIDsFromCalloutManager,
   getCalloutManagerAPIHandleIfInstalled,
 } from "./callouts/calloutManager";
 import { getFullWrapLinesInCalloutCommandID } from "./commands/commandIDs";
 import { makeRemoveCalloutFromSelectedLinesCommand } from "./commands/removeCallout";
 import { makeWrapLinesInCalloutCommand } from "./commands/wrapInCallout/wrapLinesInCallout";
-import { type PluginSettingsManager } from "./pluginSettingsManager";
 import { filterOutElements } from "./utils/arrayUtils";
 
 export class PluginCommandManager {
@@ -17,7 +18,10 @@ export class PluginCommandManager {
   addedCommandCalloutIDsSet = new Set<CalloutID>();
   onCalloutManagerChange = this.resyncCalloutCommands.bind(this);
 
-  constructor(private plugin: Plugin, private pluginSettingsManager: PluginSettingsManager) {}
+  constructor(
+    private plugin: Plugin,
+    private pluginSettingsManager: PluginSettingsManager,
+  ) {}
 
   public onPluginUnload(): void {
     if (this.calloutManager === undefined) {
@@ -89,7 +93,7 @@ export class PluginCommandManager {
   private addWrapLinesInCalloutCommand(calloutID: CalloutID): void {
     const wrapLinesInCalloutCommand = makeWrapLinesInCalloutCommand(
       calloutID,
-      this.pluginSettingsManager
+      this.pluginSettingsManager,
     );
     this.addCommand(wrapLinesInCalloutCommand);
     this.addedCommandCalloutIDsSet.add(calloutID);
@@ -101,7 +105,7 @@ export class PluginCommandManager {
 
   private addRemoveCalloutFromSelectedLinesCommand(): void {
     const removeCalloutFromSelectedLinesCommand = makeRemoveCalloutFromSelectedLinesCommand(
-      this.pluginSettingsManager
+      this.pluginSettingsManager,
     );
     this.addCommand(removeCalloutFromSelectedLinesCommand);
   }

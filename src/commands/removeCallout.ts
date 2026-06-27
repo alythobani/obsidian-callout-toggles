@@ -1,7 +1,16 @@
-import { type Command, type Editor } from "obsidian";
-import { type PluginSettingsManager } from "../pluginSettingsManager";
-import { type AutoSelectionAfterRemovingCalloutMode } from "../settings/autoSelectionModes";
-import { getLastElement, isNonEmptyArray, type NonEmptyStringArray } from "../utils/arrayUtils";
+import type { PluginSettingsManager } from "../pluginSettingsManager";
+import type { AutoSelectionAfterRemovingCalloutMode } from "../settings/autoSelectionModes";
+import type { NonEmptyStringArray } from "../utils/arrayUtils";
+import type {
+  ClearSelectionAction,
+  CursorOrSelectionAction,
+  CursorPositions,
+  SelectedLinesDiff,
+  SetSelectionInCorrectDirectionAction,
+} from "../utils/selectionUtils";
+import type { Command, Editor } from "obsidian";
+
+import { getLastElement, isNonEmptyArray } from "../utils/arrayUtils";
 import {
   getCalloutIDAndExplicitTitle,
   isCustomTitle,
@@ -10,9 +19,6 @@ import {
 import { makeCalloutSelectionCheckCallback } from "../utils/editorCheckCallbackUtils";
 import { throwNever } from "../utils/errorUtils";
 import {
-  type ClearSelectionAction,
-  type CursorOrSelectionAction,
-  type CursorPositions,
   getCalloutStartPos,
   getClearSelectionCursorStartAction,
   getCursorPositions,
@@ -20,13 +26,11 @@ import {
   getNewToPosition,
   getSelectedLinesRangeAndText,
   runCursorOrSelectionAction,
-  type SelectedLinesDiff,
-  type SetSelectionInCorrectDirectionAction,
 } from "../utils/selectionUtils";
 import { getTextLines } from "../utils/stringUtils";
 
 export function makeRemoveCalloutFromSelectedLinesCommand(
-  pluginSettingsManager: PluginSettingsManager
+  pluginSettingsManager: PluginSettingsManager,
 ): Command {
   return {
     id: "remove-callout-from-selected-lines",
@@ -89,7 +93,7 @@ function getNewLinesAfterRemovingCallout({
 
 function getNewLinesAfterRemovingCalloutWithCustomTitle(
   customTitle: string,
-  selectedLines: NonEmptyStringArray
+  selectedLines: NonEmptyStringArray,
 ): NonEmptyStringArray {
   const customTitleHeadingLine = makeH6Line(customTitle);
   const unquotedLines = selectedLines.slice(1).map((line) => line.replace(/^> /, ""));
@@ -97,7 +101,7 @@ function getNewLinesAfterRemovingCalloutWithCustomTitle(
 }
 
 function getNewLinesAfterRemovingCalloutWithDefaultTitle(
-  selectedLines: NonEmptyStringArray
+  selectedLines: NonEmptyStringArray,
 ): NonEmptyStringArray {
   const linesWithoutHeader = selectedLines.slice(1);
   const unquotedLinesWithoutHeader = linesWithoutHeader.map((line) => line.replace(/^> /, ""));
@@ -171,26 +175,6 @@ export function getCursorOrSelectionActionAfterRemovingCallout({
   }
 }
 
-function getFullTextSelectionAction({
-  selectedLinesDiff,
-  originalCursorPositions,
-}: {
-  selectedLinesDiff: SelectedLinesDiff;
-  originalCursorPositions: CursorPositions;
-}): SetSelectionInCorrectDirectionAction {
-  const newFrom = getCalloutStartPos({ originalCursorPositions });
-
-  const { oldLines, newLines } = selectedLinesDiff;
-  const didRemoveHeaderLine = oldLines.length !== newLines.length;
-  const { to: oldTo } = originalCursorPositions;
-  const newToLine = didRemoveHeaderLine ? oldTo.line - 1 : oldTo.line;
-  const newLastLine = getLastElement(newLines);
-  const newTo = { line: newToLine, ch: newLastLine.length };
-
-  const newRange = { from: newFrom, to: newTo };
-  return { type: "setSelectionInCorrectDirection", newRange, originalCursorPositions };
-}
-
 function getOriginalSelectionAction({
   selectedLinesDiff,
   originalCursorPositions,
@@ -211,6 +195,26 @@ function getOriginalSelectionAction({
   const newFrom = { line: oldFrom.line, ch: newFromCh };
 
   const newTo = getNewToPosition({ oldTo, selectedLinesDiff });
+
+  const newRange = { from: newFrom, to: newTo };
+  return { type: "setSelectionInCorrectDirection", newRange, originalCursorPositions };
+}
+
+function getFullTextSelectionAction({
+  selectedLinesDiff,
+  originalCursorPositions,
+}: {
+  selectedLinesDiff: SelectedLinesDiff;
+  originalCursorPositions: CursorPositions;
+}): SetSelectionInCorrectDirectionAction {
+  const newFrom = getCalloutStartPos({ originalCursorPositions });
+
+  const { oldLines, newLines } = selectedLinesDiff;
+  const didRemoveHeaderLine = oldLines.length !== newLines.length;
+  const { to: oldTo } = originalCursorPositions;
+  const newToLine = didRemoveHeaderLine ? oldTo.line - 1 : oldTo.line;
+  const newLastLine = getLastElement(newLines);
+  const newTo = { line: newToLine, ch: newLastLine.length };
 
   const newRange = { from: newFrom, to: newTo };
   return { type: "setSelectionInCorrectDirection", newRange, originalCursorPositions };

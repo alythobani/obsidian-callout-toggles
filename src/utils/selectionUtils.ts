@@ -1,14 +1,9 @@
-import { type Editor, type EditorPosition, type EditorRange } from "obsidian";
-import { getLastElement, type NonEmptyStringArray } from "./arrayUtils";
+import type { NonEmptyStringArray } from "./arrayUtils";
+import type { Editor, EditorPosition, EditorRange } from "obsidian";
+
+import { getLastElement } from "./arrayUtils";
 import { throwNever } from "./errorUtils";
 import { clamp } from "./numberUtils";
-
-export type CursorPositions = {
-  anchor: EditorPosition;
-  head: EditorPosition;
-  from: EditorPosition;
-  to: EditorPosition;
-};
 
 export type SelectedLinesDiff = {
   oldLines: NonEmptyStringArray;
@@ -19,6 +14,12 @@ export type LineDiff = {
   oldLine: string;
   newLine: string;
 };
+
+export type CursorOrSelectionAction =
+  | SetCursorAction
+  | SetSelectionAction
+  | SetSelectionInCorrectDirectionAction
+  | ClearSelectionAction;
 
 export type SetCursorAction = {
   type: "setCursor";
@@ -36,16 +37,17 @@ export type SetSelectionInCorrectDirectionAction = {
   originalCursorPositions: CursorPositions;
 };
 
+export type CursorPositions = {
+  anchor: EditorPosition;
+  head: EditorPosition;
+  from: EditorPosition;
+  to: EditorPosition;
+};
+
 export type ClearSelectionAction = {
   type: "clearSelection";
   newCursor: EditorPosition;
 };
-
-export type CursorOrSelectionAction =
-  | SetCursorAction
-  | SetSelectionAction
-  | SetSelectionInCorrectDirectionAction
-  | ClearSelectionAction;
 
 /**
  * Replaces the selected lines with the new lines, and adjusts the editor selection to maintain its
@@ -150,33 +152,6 @@ export function getNewPositionWithinLine({
   return newCh;
 }
 
-export function setSelectionInCorrectDirection({
-  editor,
-  originalCursorPositions,
-  newRange,
-}: {
-  editor: Editor;
-  originalCursorPositions: CursorPositions;
-  newRange: EditorRange;
-}): void {
-  const { newAnchor, newHead } = getNewAnchorAndHead(originalCursorPositions, newRange);
-  editor.setSelection(newAnchor, newHead);
-}
-
-function getNewAnchorAndHead(
-  originalCursorPositions: CursorPositions,
-  newRange: EditorRange
-): { newAnchor: EditorPosition; newHead: EditorPosition } {
-  const { from: newFrom, to: newTo } = newRange;
-  return isHeadBeforeAnchor(originalCursorPositions)
-    ? { newAnchor: newTo, newHead: newFrom }
-    : { newAnchor: newFrom, newHead: newTo };
-}
-
-function isHeadBeforeAnchor({ anchor, head }: Pick<CursorPositions, "anchor" | "head">): boolean {
-  return head.line < anchor.line || (head.line === anchor.line && head.ch < anchor.ch);
-}
-
 /**
  * Returns the range and text of the selected lines, from the start of the first
  * selected line to the end of the last selected line (regardless of where in
@@ -244,6 +219,33 @@ export function runCursorOrSelectionAction({
     default:
       throwNever(action);
   }
+}
+
+export function setSelectionInCorrectDirection({
+  editor,
+  originalCursorPositions,
+  newRange,
+}: {
+  editor: Editor;
+  originalCursorPositions: CursorPositions;
+  newRange: EditorRange;
+}): void {
+  const { newAnchor, newHead } = getNewAnchorAndHead(originalCursorPositions, newRange);
+  editor.setSelection(newAnchor, newHead);
+}
+
+function getNewAnchorAndHead(
+  originalCursorPositions: CursorPositions,
+  newRange: EditorRange,
+): { newAnchor: EditorPosition; newHead: EditorPosition } {
+  const { from: newFrom, to: newTo } = newRange;
+  return isHeadBeforeAnchor(originalCursorPositions)
+    ? { newAnchor: newTo, newHead: newFrom }
+    : { newAnchor: newFrom, newHead: newTo };
+}
+
+function isHeadBeforeAnchor({ anchor, head }: Pick<CursorPositions, "anchor" | "head">): boolean {
+  return head.line < anchor.line || (head.line === anchor.line && head.ch < anchor.ch);
 }
 
 /**

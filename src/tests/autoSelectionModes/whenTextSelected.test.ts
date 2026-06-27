@@ -1,9 +1,13 @@
+import type { BeforeAndAfter, GetExpected } from "./testAutoSelectionMode";
+import type { AutoSelectionWhenTextSelectedMode } from "../../settings/autoSelectionModes";
+import type { CalloutHeaderParts } from "../../utils/calloutTitleUtils";
+import type { CursorPositions, SelectedLinesDiff } from "../../utils/selectionUtils";
+
 import { describe, expect, it, test } from "vitest";
+
 import { getCursorOrSelectionActionAfterWrappingSelectedLines } from "../../commands/wrapInCallout/wrapSelectedLinesInCallout";
-import { type AutoSelectionWhenTextSelectedMode } from "../../settings/autoSelectionModes";
-import { type CalloutHeaderParts } from "../../utils/calloutTitleUtils";
-import { type CursorPositions, type SelectedLinesDiff } from "../../utils/selectionUtils";
-import { type BeforeAndAfter, type GetExpected } from "./testAutoSelectionMode";
+
+export type AutoSelectionModeTestFn = (testParams: TestParams) => void;
 
 export type TestParams = {
   calloutHeaderParts: CalloutHeaderParts;
@@ -11,28 +15,6 @@ export type TestParams = {
   originalCursorPositions: CursorPositions;
   beforeAndAfter: BeforeAndAfter;
 };
-
-export type AutoSelectionModeTestFn = (testParams: TestParams) => void;
-
-function testWhenTextSelected({
-  whenTextSelected,
-  testParams: { calloutHeaderParts, selectedLinesDiff, originalCursorPositions, beforeAndAfter },
-  getExpected,
-}: {
-  whenTextSelected: AutoSelectionWhenTextSelectedMode;
-  testParams: TestParams;
-  getExpected: GetExpected;
-}): void {
-  const result = getCursorOrSelectionActionAfterWrappingSelectedLines({
-    whenTextSelected,
-    selectedLinesDiff,
-    originalCursorPositions,
-    calloutHeaderParts,
-  });
-  const { after } = beforeAndAfter;
-  const expectedResult = getExpected({ after, originalCursorPositions });
-  expect(result).toEqual(expectedResult);
-}
 
 const calloutHeaderParts1: CalloutHeaderParts = {
   baseCalloutHeader: "> [!quote]",
@@ -259,3 +241,23 @@ describe("whenTextSelected", () => {
     });
   });
 });
+
+function testWhenTextSelected({
+  whenTextSelected,
+  testParams: { calloutHeaderParts, selectedLinesDiff, originalCursorPositions, beforeAndAfter },
+  getExpected,
+}: {
+  whenTextSelected: AutoSelectionWhenTextSelectedMode;
+  testParams: TestParams;
+  getExpected: GetExpected;
+}): void {
+  const result = getCursorOrSelectionActionAfterWrappingSelectedLines({
+    whenTextSelected,
+    selectedLinesDiff,
+    originalCursorPositions,
+    calloutHeaderParts,
+  });
+  const { after } = beforeAndAfter;
+  const expectedResult = getExpected({ after, originalCursorPositions });
+  expect(result).toEqual(expectedResult);
+}

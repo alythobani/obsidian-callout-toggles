@@ -1,6 +1,7 @@
-import { type Command, type Editor } from "obsidian";
-import { type CalloutID } from "obsidian-callout-manager";
-import { type PluginSettingsManager } from "../../pluginSettingsManager";
+import type { PluginSettingsManager } from "../../pluginSettingsManager";
+import type { Command, Editor } from "obsidian";
+import type { CalloutID } from "obsidian-callout-manager";
+
 import { getPartialWrapLinesInCalloutCommandID } from "../commandIDs";
 import { wrapCurrentLineInCallout } from "./wrapCurrentLineInCallout";
 import { wrapSelectedLinesInCallout } from "./wrapSelectedLinesInCallout";
@@ -11,7 +12,7 @@ import { wrapSelectedLinesInCallout } from "./wrapSelectedLinesInCallout";
  */
 export function makeWrapLinesInCalloutCommand(
   calloutID: CalloutID,
-  pluginSettingsManager: PluginSettingsManager
+  pluginSettingsManager: PluginSettingsManager,
 ): Command {
   return {
     id: getPartialWrapLinesInCalloutCommandID(calloutID),
@@ -23,7 +24,7 @@ export function makeWrapLinesInCalloutCommand(
 function wrapLinesInCallout(
   editor: Editor,
   calloutID: CalloutID,
-  pluginSettingsManager: PluginSettingsManager
+  pluginSettingsManager: PluginSettingsManager,
 ): void {
   if (editor.somethingSelected()) {
     wrapSelectedLinesInCallout(editor, calloutID, pluginSettingsManager);

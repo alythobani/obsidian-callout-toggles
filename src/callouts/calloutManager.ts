@@ -1,15 +1,12 @@
-import { type Plugin } from "obsidian";
-import {
-  type CalloutID,
-  type CalloutManager,
-  getApi,
-  isInstalled as isCalloutManagerInstalled,
-} from "obsidian-callout-manager";
+import type { Plugin } from "obsidian";
+import type { CalloutID, CalloutManager } from "obsidian-callout-manager";
+
+import { getApi, isInstalled as isCalloutManagerInstalled } from "obsidian-callout-manager";
 
 export type CalloutManagerOwnedHandle = CalloutManager<true>;
 
 export async function getCalloutManagerAPIHandleIfInstalled(
-  plugin: Plugin
+  plugin: Plugin,
 ): Promise<CalloutManagerOwnedHandle | undefined> {
   if (!isCalloutManagerInstalled(plugin.app)) {
     return undefined;
@@ -18,7 +15,7 @@ export async function getCalloutManagerAPIHandleIfInstalled(
 }
 
 export function getCalloutIDsFromCalloutManager(
-  calloutManager: CalloutManagerOwnedHandle
+  calloutManager: CalloutManagerOwnedHandle,
 ): readonly CalloutID[] {
   return calloutManager.getCallouts().map((callout) => callout.id);
 }
