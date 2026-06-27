@@ -3,7 +3,7 @@ import type { SetCursorAction, SetSelectionAction } from "../../utils/selectionU
 
 import { describe, expect, it, test } from "vitest";
 
-import { getCursorOrSelectionActionAfterWrappingCurrentLine } from "../../commands/wrapInCallout/wrapCurrentLineInCallout";
+import { getCursorOrSelectionActionAfterWrappingCurrentLine } from "../../lib/wrapLinesInCallout/wrapCurrentLineInCallout";
 
 describe("whenNothingSelected", () => {
   const calloutHeaderParts: CalloutHeaderParts = {

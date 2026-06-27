@@ -5,7 +5,7 @@ import type { CursorPositions, SelectedLinesDiff } from "../../utils/selectionUt
 
 import { describe, expect, it, test } from "vitest";
 
-import { getCursorOrSelectionActionAfterWrappingSelectedLines } from "../../commands/wrapInCallout/wrapSelectedLinesInCallout";
+import { getCursorOrSelectionActionAfterWrappingSelectedLines } from "../../lib/wrapLinesInCallout/wrapSelectedLinesInCallout";
 
 export type AutoSelectionModeTestFn = (testParams: TestParams) => void;
 

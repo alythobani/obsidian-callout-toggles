@@ -8,9 +8,11 @@ import {
   getCalloutIDsFromCalloutManager,
   getCalloutManagerAPIHandleIfInstalled,
 } from "./callouts/calloutManager";
-import { getFullWrapLinesInCalloutCommandID } from "./commands/commandIDs";
 import { makeRemoveCalloutFromSelectedLinesCommand } from "./commands/removeCallout";
-import { makeWrapLinesInCalloutCommand } from "./commands/wrapInCallout/wrapLinesInCallout";
+import {
+  getFullWrapLinesInXCalloutCommandID,
+  makeWrapLinesInXCalloutCommand,
+} from "./commands/wrapLinesInXCallout";
 import { filterOutElements } from "./utils/arrayUtils";
 
 export class PluginCommandManager {
@@ -46,7 +48,7 @@ export class PluginCommandManager {
 
   private resyncCalloutCommands(): void {
     const allCalloutIDs = this.getAllCalloutIDs();
-    this.removeOutdatedCalloutCommands(allCalloutIDs);
+    this.removeOutdatedWrapLinesInXCalloutCommands(allCalloutIDs);
     this.addMissingCalloutCommands(allCalloutIDs);
   }
 
@@ -61,41 +63,41 @@ export class PluginCommandManager {
     return getCalloutIDsFromCalloutManager(this.calloutManager);
   }
 
-  private removeOutdatedCalloutCommands(newCalloutIDs: readonly CalloutID[]): void {
+  private removeOutdatedWrapLinesInXCalloutCommands(newCalloutIDs: readonly CalloutID[]): void {
     const existingCommandCalloutIDs = Array.from(this.addedCommandCalloutIDsSet);
     const newCalloutIDsSet = new Set(newCalloutIDs);
     const outdatedCalloutIDs = filterOutElements(existingCommandCalloutIDs, newCalloutIDsSet);
-    outdatedCalloutIDs.forEach((calloutID) => this.removeWrapLinesInCalloutCommand(calloutID));
+    outdatedCalloutIDs.forEach((calloutID) => this.removeWrapLinesInXCalloutCommand(calloutID));
   }
 
-  private removeWrapLinesInCalloutCommand(calloutID: CalloutID): void {
+  private removeWrapLinesInXCalloutCommand(calloutID: CalloutID): void {
     const pluginID = this.plugin.manifest.id;
-    const fullCommandID = getFullWrapLinesInCalloutCommandID({ pluginID, calloutID });
+    const fullCommandID = getFullWrapLinesInXCalloutCommandID({ pluginID, calloutID });
     this.removeCommand({ fullCommandID });
     this.addedCommandCalloutIDsSet.delete(calloutID);
   }
 
   private addMissingCalloutCommands(newCalloutIDs: readonly CalloutID[]): void {
     const missingCalloutIDs = filterOutElements(newCalloutIDs, this.addedCommandCalloutIDsSet);
-    missingCalloutIDs.forEach((calloutID) => this.addWrapLinesInCalloutCommand(calloutID));
+    missingCalloutIDs.forEach((calloutID) => this.addWrapLinesInXCalloutCommand(calloutID));
   }
 
   private addAllCommands(): void {
-    this.addAllWrapLinesInCalloutCommands();
+    this.addAllWrapLinesInXCalloutCommands();
     this.addRemoveCalloutFromSelectedLinesCommand();
   }
 
-  private addAllWrapLinesInCalloutCommands(): void {
+  private addAllWrapLinesInXCalloutCommands(): void {
     const allCalloutIDs = this.getAllCalloutIDs();
-    allCalloutIDs.forEach((calloutID) => this.addWrapLinesInCalloutCommand(calloutID));
+    allCalloutIDs.forEach((calloutID) => this.addWrapLinesInXCalloutCommand(calloutID));
   }
 
-  private addWrapLinesInCalloutCommand(calloutID: CalloutID): void {
-    const wrapLinesInCalloutCommand = makeWrapLinesInCalloutCommand(
+  private addWrapLinesInXCalloutCommand(calloutID: CalloutID): void {
+    const wrapLinesInXCalloutCommand = makeWrapLinesInXCalloutCommand(
       calloutID,
       this.pluginSettingsManager,
     );
-    this.addCommand(wrapLinesInCalloutCommand);
+    this.addCommand(wrapLinesInXCalloutCommand);
     this.addedCommandCalloutIDsSet.add(calloutID);
   }
 
