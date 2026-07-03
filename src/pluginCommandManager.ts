@@ -9,6 +9,7 @@ import {
   getCalloutManagerAPIHandleIfInstalled,
 } from "./callouts/calloutManager";
 import { makeRemoveCalloutFromSelectedLinesCommand } from "./commands/removeCallout";
+import { makeWrapLinesInCalloutViaFuzzyPickerCommand } from "./commands/wrapLinesInCalloutViaFuzzyPicker";
 import {
   getFullWrapLinesInXCalloutCommandID,
   makeWrapLinesInXCalloutCommand,
@@ -83,8 +84,18 @@ export class PluginCommandManager {
   }
 
   private addAllCommands(): void {
+    this.addWrapLinesInCalloutViaFuzzyPickerCommand();
     this.addAllWrapLinesInXCalloutCommands();
     this.addRemoveCalloutFromSelectedLinesCommand();
+  }
+
+  private addWrapLinesInCalloutViaFuzzyPickerCommand(): void {
+    const wrapLinesInCalloutViaFuzzyPickerCommand = makeWrapLinesInCalloutViaFuzzyPickerCommand(
+      this.plugin.app,
+      this.getAllCalloutIDs.bind(this),
+      this.pluginSettingsManager,
+    );
+    this.addCommand(wrapLinesInCalloutViaFuzzyPickerCommand);
   }
 
   private addAllWrapLinesInXCalloutCommands(): void {
