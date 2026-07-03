@@ -1,5 +1,6 @@
-import { type Command, type Editor } from "obsidian";
-import { type PluginSettingsManager } from "../pluginSettingsManager";
+import type { PluginSettingsManager } from "../pluginSettingsManager";
+import type { Command, Editor } from "obsidian";
+
 import { CALLOUT_HEADER_WITH_ID_CAPTURE_REGEX } from "./calloutTitleUtils";
 import { getSelectedLinesRangeAndText } from "./selectionUtils";
 
@@ -9,8 +10,9 @@ import { getSelectedLinesRangeAndText } from "./selectionUtils";
  */
 type EditorCheckCallback = Required<Command>["editorCheckCallback"];
 
-type EditorActionParams = { editor: Editor; pluginSettingsManager: PluginSettingsManager };
 type EditorAction = ({ editor, pluginSettingsManager }: EditorActionParams) => void;
+
+type EditorActionParams = { editor: Editor; pluginSettingsManager: PluginSettingsManager };
 
 /**
  * Creates an editor check callback for a command that should only be available when the currently

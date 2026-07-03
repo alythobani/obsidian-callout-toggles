@@ -1,11 +1,9 @@
-export type NonEmptyArray<T> = [T, ...T[]];
 export type NonEmptyStringArray = NonEmptyArray<string>;
 
-type LastElement<A extends unknown[]> = A extends NonEmptyArray<infer T>
-  ? T
-  : A extends (infer T)[]
-  ? T | undefined
-  : never;
+type LastElement<A extends unknown[]> =
+  A extends NonEmptyArray<infer T> ? T : A extends (infer T)[] ? T | undefined : never;
+
+export type NonEmptyArray<T> = [T, ...T[]];
 
 /**
  * Returns the last element of the array. Typed so that if we know we're passing a non-empty array,

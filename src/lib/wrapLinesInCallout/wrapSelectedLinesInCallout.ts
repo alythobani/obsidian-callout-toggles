@@ -1,10 +1,21 @@
-import { type Editor, type EditorPosition } from "obsidian";
-import { type CalloutID } from "obsidian-callout-manager";
-import { type PluginSettingsManager } from "../../pluginSettingsManager";
-import { type AutoSelectionWhenTextSelectedMode } from "../../settings/autoSelectionModes";
-import { getLastElement, type NonEmptyStringArray } from "../../utils/arrayUtils";
+import type { PluginSettingsManager } from "../../pluginSettingsManager";
+import type { AutoSelectionWhenTextSelectedMode } from "../../settings/autoSelectionModes";
+import type { NonEmptyStringArray } from "../../utils/arrayUtils";
+import type { CalloutHeaderParts } from "../../utils/calloutTitleUtils";
+import type {
+  ClearSelectionAction,
+  CursorOrSelectionAction,
+  CursorPositions,
+  LineDiff,
+  SelectedLinesDiff,
+  SetSelectionAction,
+  SetSelectionInCorrectDirectionAction,
+} from "../../utils/selectionUtils";
+import type { Editor, EditorPosition } from "obsidian";
+import type { CalloutID } from "obsidian-callout-manager";
+
+import { getLastElement } from "../../utils/arrayUtils";
 import {
-  type CalloutHeaderParts,
   constructCalloutHeaderFromParts,
   getCustomHeadingTitleIfExists,
   getNewCalloutHeaderParts,
@@ -12,9 +23,6 @@ import {
 } from "../../utils/calloutTitleUtils";
 import { throwNever } from "../../utils/errorUtils";
 import {
-  type ClearSelectionAction,
-  type CursorOrSelectionAction,
-  type CursorPositions,
   getCalloutStartPos,
   getClearSelectionCursorStartAction,
   getCursorPositions,
@@ -23,11 +31,7 @@ import {
   getNewPositionWithinLine,
   getNewToPosition,
   getSelectedLinesRangeAndText,
-  type LineDiff,
   runCursorOrSelectionAction,
-  type SelectedLinesDiff,
-  type SetSelectionAction,
-  type SetSelectionInCorrectDirectionAction,
 } from "../../utils/selectionUtils";
 import { getTextLines } from "../../utils/stringUtils";
 
@@ -37,7 +41,7 @@ import { getTextLines } from "../../utils/stringUtils";
 export function wrapSelectedLinesInCallout(
   editor: Editor,
   calloutID: CalloutID,
-  pluginSettingsManager: PluginSettingsManager
+  pluginSettingsManager: PluginSettingsManager,
 ): void {
   const originalCursorPositions = getCursorPositions(editor); // Save cursor positions before editing
   const { selectedLinesRange, selectedLinesText } = getSelectedLinesRangeAndText(editor);
@@ -68,12 +72,12 @@ export function wrapSelectedLinesInCallout(
  * determines whether it is included in the raw body lines.
  */
 function getCalloutTitleAndBodyFromSelectedLines(selectedLines: NonEmptyStringArray): {
-  maybeTitleFromHeading: string | null;
+  maybeTitleFromHeading: string | undefined;
   rawBodyLines: string[];
 } {
   const [firstSelectedLine, ...restSelectedLines] = selectedLines;
   const maybeTitleFromHeading = getCustomHeadingTitleIfExists({ firstSelectedLine });
-  const rawBodyLines = maybeTitleFromHeading === null ? selectedLines : restSelectedLines;
+  const rawBodyLines = maybeTitleFromHeading === undefined ? selectedLines : restSelectedLines;
   return { maybeTitleFromHeading, rawBodyLines };
 }
 
@@ -196,6 +200,38 @@ function getSelectHeaderToCursorAction({
 }
 
 /**
+ * Selects the full callout after wrapping the selected lines in a callout.
+ */
+function getSelectFullAction({
+  selectedLinesDiff,
+  originalCursorPositions,
+  didAddHeaderLine,
+}: {
+  selectedLinesDiff: SelectedLinesDiff;
+  originalCursorPositions: CursorPositions;
+  didAddHeaderLine: boolean;
+}): SetSelectionInCorrectDirectionAction {
+  const startPos = getCalloutStartPos({ originalCursorPositions });
+  const endPos = getCalloutEndPos({ selectedLinesDiff, originalCursorPositions, didAddHeaderLine });
+  const newRange = { from: startPos, to: endPos };
+  return { type: "setSelectionInCorrectDirection", newRange, originalCursorPositions };
+}
+
+/**
+ * Selects the callout title after wrapping the selected lines in a callout.
+ */
+function getSelectTitleAction({
+  originalCursorPositions,
+  calloutHeaderParts,
+}: {
+  originalCursorPositions: CursorPositions;
+  calloutHeaderParts: CalloutHeaderParts;
+}): SetSelectionAction {
+  const titleRange = getTitleRange({ calloutHeaderParts, line: originalCursorPositions.from.line });
+  return { type: "setSelection", newRange: titleRange };
+}
+
+/**
  * Selects the original selection after wrapping the selected lines in a callout.
  */
 function getOriginalSelectionAction({
@@ -242,38 +278,6 @@ function getFirstLineDiff({
     throw new Error("Expected first non-header line to be defined");
   }
   return { oldLine, newLine: secondNewLine };
-}
-
-/**
- * Selects the full callout after wrapping the selected lines in a callout.
- */
-function getSelectFullAction({
-  selectedLinesDiff,
-  originalCursorPositions,
-  didAddHeaderLine,
-}: {
-  selectedLinesDiff: SelectedLinesDiff;
-  originalCursorPositions: CursorPositions;
-  didAddHeaderLine: boolean;
-}): SetSelectionInCorrectDirectionAction {
-  const startPos = getCalloutStartPos({ originalCursorPositions });
-  const endPos = getCalloutEndPos({ selectedLinesDiff, originalCursorPositions, didAddHeaderLine });
-  const newRange = { from: startPos, to: endPos };
-  return { type: "setSelectionInCorrectDirection", newRange, originalCursorPositions };
-}
-
-/**
- * Selects the callout title after wrapping the selected lines in a callout.
- */
-function getSelectTitleAction({
-  originalCursorPositions,
-  calloutHeaderParts,
-}: {
-  originalCursorPositions: CursorPositions;
-  calloutHeaderParts: CalloutHeaderParts;
-}): SetSelectionAction {
-  const titleRange = getTitleRange({ calloutHeaderParts, line: originalCursorPositions.from.line });
-  return { type: "setSelection", newRange: titleRange };
 }
 
 function getClearSelectionCursorToAction({

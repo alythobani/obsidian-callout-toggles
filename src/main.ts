@@ -1,4 +1,5 @@
 import { Plugin } from "obsidian";
+
 import { PluginCommandManager } from "./pluginCommandManager";
 import { PluginSettingsManager } from "./pluginSettingsManager";
 

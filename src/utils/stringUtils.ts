@@ -1,4 +1,4 @@
-import { type NonEmptyStringArray } from "./arrayUtils";
+import type { NonEmptyStringArray } from "./arrayUtils";
 
 /**
  * Better-typed version of `text.split("\n")` where we know the result will always have at least one

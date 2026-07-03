@@ -1,7 +1,9 @@
+import type { CalloutHeaderParts } from "../../utils/calloutTitleUtils";
+import type { SetCursorAction, SetSelectionAction } from "../../utils/selectionUtils";
+
 import { describe, expect, it, test } from "vitest";
-import { getCursorOrSelectionActionAfterWrappingCurrentLine } from "../../commands/wrapInCallout/wrapCurrentLineInCallout";
-import { type CalloutHeaderParts } from "../../utils/calloutTitleUtils";
-import { type SetCursorAction, type SetSelectionAction } from "../../utils/selectionUtils";
+
+import { getCursorOrSelectionActionAfterWrappingCurrentLine } from "../../lib/wrapLinesInCallout/wrapCurrentLineInCallout";
 
 describe("whenNothingSelected", () => {
   const calloutHeaderParts: CalloutHeaderParts = {

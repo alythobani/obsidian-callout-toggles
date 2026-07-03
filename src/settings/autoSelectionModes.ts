@@ -1,4 +1,4 @@
-import { type TypedDropdownOption } from "./typedSettingsHelpers";
+import type { TypedDropdownOption } from "./typedSettingsHelpers";
 
 export const whenNothingSelectedAutoSelectionOptions: readonly TypedDropdownOption<AutoSelectionWhenNothingSelectedMode>[] =
   [
@@ -29,12 +29,17 @@ export const afterRemovingCalloutAutoSelectionOptions: readonly TypedDropdownOpt
     { value: "clearSelectionCursorEnd", displayText: "Clear selection, cursor at end" },
   ];
 
+export type AutoSelectionModes = {
+  /** Cursor/selection behavior after wrapping with no text selected. */
+  whenNothingSelected: AutoSelectionWhenNothingSelectedMode;
+  /** Cursor/selection behavior after wrapping a selection. */
+  whenTextSelected: AutoSelectionWhenTextSelectedMode;
+  /** Cursor/selection behavior after removing a callout. */
+  afterRemovingCallout: AutoSelectionAfterRemovingCalloutMode;
+};
+
 export type AutoSelectionWhenNothingSelectedMode =
-  | "selectHeaderToCursor"
-  | "selectFull"
-  | "selectTitle"
-  | "originalCursor"
-  | "cursorEnd";
+  "selectHeaderToCursor" | "selectFull" | "selectTitle" | "originalCursor" | "cursorEnd";
 
 export type AutoSelectionWhenTextSelectedMode =
   | "selectHeaderToCursor"
@@ -51,15 +56,6 @@ export type AutoSelectionAfterRemovingCalloutMode =
   | "clearSelectionCursorTo"
   | "clearSelectionCursorStart"
   | "clearSelectionCursorEnd";
-
-export type AutoSelectionModes = {
-  /** Cursor/selection behavior after wrapping with no text selected. */
-  whenNothingSelected: AutoSelectionWhenNothingSelectedMode;
-  /** Cursor/selection behavior after wrapping a selection. */
-  whenTextSelected: AutoSelectionWhenTextSelectedMode;
-  /** Cursor/selection behavior after removing a callout. */
-  afterRemovingCallout: AutoSelectionAfterRemovingCalloutMode;
-};
 
 export const DEFAULT_AUTO_SELECTION_MODES: AutoSelectionModes = {
   whenNothingSelected: "selectHeaderToCursor",

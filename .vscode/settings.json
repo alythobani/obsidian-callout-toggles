@@ -1,17 +1,6 @@
 {
   "cSpell.words": ["Callout", "callouts", "tldr", "unfoldable"],
   "[javascript][typescript][typescriptreact][json][jsonc]": {
-    // Prettier
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.rulers": [100], // goes with printWidth: 100 in prettierrc
-    // Eslint
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
-      "source.organizeImports": "explicit"
-    },
-    // TypeScript
     "typescript.preferences.importModuleSpecifier": "relative"
   }
 }

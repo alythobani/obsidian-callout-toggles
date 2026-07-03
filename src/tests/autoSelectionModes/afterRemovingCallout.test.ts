@@ -1,35 +1,18 @@
+import type { BeforeAndAfter, GetExpected } from "./testAutoSelectionMode";
+import type { AutoSelectionAfterRemovingCalloutMode } from "../../settings/autoSelectionModes";
+import type { CursorPositions, SelectedLinesDiff } from "../../utils/selectionUtils";
+
 import { describe, expect, it, test } from "vitest";
+
 import { getCursorOrSelectionActionAfterRemovingCallout } from "../../commands/removeCallout";
-import { type AutoSelectionAfterRemovingCalloutMode } from "../../settings/autoSelectionModes";
-import { type CursorPositions, type SelectedLinesDiff } from "../../utils/selectionUtils";
-import { type BeforeAndAfter, type GetExpected } from "./testAutoSelectionMode";
+
+type AfterRemovingCalloutTest = (testParams: TestParams) => void;
 
 type TestParams = {
   selectedLinesDiff: SelectedLinesDiff;
   originalCursorPositions: CursorPositions;
   beforeAndAfter: BeforeAndAfter;
 };
-
-type AfterRemovingCalloutTest = (testParams: TestParams) => void;
-
-function testAfterRemovingCallout({
-  afterRemovingCallout,
-  testParams: { selectedLinesDiff, originalCursorPositions, beforeAndAfter },
-  getExpected,
-}: {
-  afterRemovingCallout: AutoSelectionAfterRemovingCalloutMode;
-  testParams: TestParams;
-  getExpected: GetExpected;
-}): void {
-  const result = getCursorOrSelectionActionAfterRemovingCallout({
-    afterRemovingCallout,
-    selectedLinesDiff,
-    originalCursorPositions,
-  });
-  const { after } = beforeAndAfter;
-  const expectedResult = getExpected({ after, originalCursorPositions });
-  expect(result).toEqual(expectedResult);
-}
 
 const selectedLinesDiff1: SelectedLinesDiff = {
   oldLines: [
@@ -203,3 +186,22 @@ describe("afterRemovingCallout", () => {
     });
   });
 });
+
+function testAfterRemovingCallout({
+  afterRemovingCallout,
+  testParams: { selectedLinesDiff, originalCursorPositions, beforeAndAfter },
+  getExpected,
+}: {
+  afterRemovingCallout: AutoSelectionAfterRemovingCalloutMode;
+  testParams: TestParams;
+  getExpected: GetExpected;
+}): void {
+  const result = getCursorOrSelectionActionAfterRemovingCallout({
+    afterRemovingCallout,
+    selectedLinesDiff,
+    originalCursorPositions,
+  });
+  const { after } = beforeAndAfter;
+  const expectedResult = getExpected({ after, originalCursorPositions });
+  expect(result).toEqual(expectedResult);
+}

@@ -1,16 +1,16 @@
-import { type Plugin, PluginSettingTab, Setting } from "obsidian";
+import type { AutoSelectionModes } from "./settings/autoSelectionModes";
+import type { Plugin } from "obsidian";
+
+import { PluginSettingTab, Setting } from "obsidian";
+
 import {
-  afterRemovingCalloutAutoSelectionOptions,
-  type AutoSelectionModes,
   DEFAULT_AUTO_SELECTION_MODES,
+  afterRemovingCalloutAutoSelectionOptions,
   migrateV1SettingToV2AutoSelectionModes,
   whenNothingSelectedAutoSelectionOptions,
   whenTextSelectedAutoSelectionOptions,
 } from "./settings/autoSelectionModes";
 import { createTypedDropdownSetting } from "./settings/typedSettingsHelpers";
-
-type DefaultFoldableState = "unfoldable" | "foldable-expanded" | "foldable-collapsed";
-type CalloutIDCapitalization = "lower" | "upper" | "sentence" | "title";
 
 type PluginSettingsV1 = {
   pluginVersion: undefined; // 1.1.0, but not set
@@ -20,6 +20,8 @@ type PluginSettingsV1 = {
   shouldSetSelectionAfterCurrentLineWrap: boolean;
 };
 
+type SettingKey = keyof PluginSettingsV2;
+
 type PluginSettingsV2 = {
   pluginVersion: "1.2.0";
   shouldUseExplicitTitle: boolean;
@@ -28,31 +30,9 @@ type PluginSettingsV2 = {
   autoSelectionModes: Readonly<AutoSelectionModes>;
 };
 
-/**
- * Migrates empty or old settings to the current version (1.2.0), with default values as well as V1
- * settings migrated to V2 equivalents.
- */
-function migrateSettingsToV2(oldSettings: Partial<PluginSettingsV1>): PluginSettingsV2 {
-  const { shouldSetSelectionAfterCurrentLineWrap, pluginVersion: _, ...rest } = oldSettings;
-  if (shouldSetSelectionAfterCurrentLineWrap === undefined) {
-    return { ...deepCloneSettings(DEFAULT_SETTINGS), ...rest };
-  }
-  const autoSelectionModes = migrateV1SettingToV2AutoSelectionModes({
-    shouldSetSelectionAfterCurrentLineWrap,
-  });
-  return { ...DEFAULT_SETTINGS, ...rest, autoSelectionModes };
-}
+type CalloutIDCapitalization = "lower" | "upper" | "sentence" | "title";
 
-type SettingKey = keyof PluginSettingsV2;
-
-/**
- * Deep-clones the given settings. There's currently only one nested object: `autoSelectionModes`.
- */
-function deepCloneSettings(settings: PluginSettingsV2): PluginSettingsV2 {
-  const clone: PluginSettingsV2 = { ...settings };
-  clone.autoSelectionModes = { ...settings.autoSelectionModes };
-  return clone;
-}
+type DefaultFoldableState = "unfoldable" | "foldable-expanded" | "foldable-collapsed";
 
 export const DEFAULT_SETTINGS: PluginSettingsV2 = {
   pluginVersion: "1.2.0",
@@ -97,7 +77,7 @@ export class PluginSettingsManager extends PluginSettingTab {
 
   private async setSetting<K extends SettingKey>(
     settingKey: K,
-    value: PluginSettingsV2[K]
+    value: PluginSettingsV2[K],
   ): Promise<void> {
     this.settings[settingKey] = value;
     await this.saveSettings();
@@ -105,7 +85,7 @@ export class PluginSettingsManager extends PluginSettingTab {
 
   private async setAutoSelectionMode<K extends keyof AutoSelectionModes>(
     modeKey: K,
-    value: AutoSelectionModes[K]
+    value: AutoSelectionModes[K],
   ): Promise<void> {
     const newAutoSelectionModes = { ...this.settings.autoSelectionModes, [modeKey]: value };
     await this.setSetting("autoSelectionModes", newAutoSelectionModes);
@@ -128,12 +108,12 @@ export class PluginSettingsManager extends PluginSettingTab {
     new Setting(this.containerEl)
       .setName("Explicit callout titles")
       .setDesc(
-        "Whether inserted callouts should have an explicit or implicit title by default. E.g. `> [!quote] Quote` vs `> [!quote]`."
+        "Whether inserted callouts should have an explicit or implicit title by default. E.g. `> [!quote] Quote` vs `> [!quote]`.",
       )
       .addToggle((toggle) =>
         toggle
           .setValue(this.settings.shouldUseExplicitTitle)
-          .onChange((value) => this.setSetting("shouldUseExplicitTitle", value))
+          .onChange((value) => this.setSetting("shouldUseExplicitTitle", value)),
       );
   }
 
@@ -175,7 +155,7 @@ export class PluginSettingsManager extends PluginSettingTab {
       .setName("Auto-selection / auto-cursor")
       .setHeading()
       .setDesc(
-        "What to select, or where to place the cursor, after running a command. Selecting up to the header (or full text) can help with switching callout types quickly (by running remove/wrap back to back). But the other modes have their own merits as well. Experiment around to see what you prefer!"
+        "What to select, or where to place the cursor, after running a command. Selecting up to the header (or full text) can help with switching callout types quickly (by running remove/wrap back to back). But the other modes have their own merits as well. Experiment around to see what you prefer!",
       );
     createTypedDropdownSetting({
       containerEl: this.containerEl,
@@ -208,4 +188,28 @@ export class PluginSettingsManager extends PluginSettingTab {
   private async saveSettings(): Promise<void> {
     await this.plugin.saveData(this.settings);
   }
+}
+
+/**
+ * Migrates empty or old settings to the current version (1.2.0), with default values as well as V1
+ * settings migrated to V2 equivalents.
+ */
+function migrateSettingsToV2(oldSettings: Partial<PluginSettingsV1>): PluginSettingsV2 {
+  const { shouldSetSelectionAfterCurrentLineWrap, pluginVersion: _, ...rest } = oldSettings;
+  if (shouldSetSelectionAfterCurrentLineWrap === undefined) {
+    return { ...deepCloneSettings(DEFAULT_SETTINGS), ...rest };
+  }
+  const autoSelectionModes = migrateV1SettingToV2AutoSelectionModes({
+    shouldSetSelectionAfterCurrentLineWrap,
+  });
+  return { ...DEFAULT_SETTINGS, ...rest, autoSelectionModes };
+}
+
+/**
+ * Deep-clones the given settings. There's currently only one nested object: `autoSelectionModes`.
+ */
+function deepCloneSettings(settings: PluginSettingsV2): PluginSettingsV2 {
+  const clone: PluginSettingsV2 = { ...settings };
+  clone.autoSelectionModes = { ...settings.autoSelectionModes };
+  return clone;
 }

@@ -1,0 +1,8 @@
+.callout-toggles-fuzzy-picker-suggestion {
+  padding: var(--size-4-3);
+  .callout {
+    margin: 0;
+    mix-blend-mode: unset;
+    padding: var(--size-4-3);
+  }
+}
