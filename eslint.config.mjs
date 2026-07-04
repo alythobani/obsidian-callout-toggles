@@ -97,6 +97,7 @@ export default defineConfig(
         "error",
         { types: { null: { message: "Use undefined instead of null", suggest: ["undefined"] } } },
       ],
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
       // #endregion
     },
   },

@@ -14,7 +14,6 @@ import {
   getNewCalloutHeaderParts,
   getTitleRange,
 } from "../../utils/calloutTitleUtils";
-import { throwNever } from "../../utils/errorUtils";
 import { runCursorOrSelectionAction } from "../../utils/selectionUtils";
 
 /**
@@ -115,8 +114,6 @@ export function getCursorOrSelectionActionAfterWrappingCurrentLine({
     case "cursorEnd": {
       return getCursorToEndOfLineAction({ oldCursor, oldLineText });
     }
-    default:
-      throwNever(whenNothingSelected);
   }
 }
 

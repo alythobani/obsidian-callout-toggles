@@ -21,7 +21,6 @@ import {
   getNewCalloutHeaderParts,
   getTitleRange,
 } from "../../utils/calloutTitleUtils";
-import { throwNever } from "../../utils/errorUtils";
 import {
   getCalloutStartPos,
   getClearSelectionCursorStartAction,
@@ -170,8 +169,6 @@ export function getCursorOrSelectionActionAfterWrappingSelectedLines({
         didAddHeaderLine,
       });
     }
-    default:
-      throwNever(whenTextSelected);
   }
 }
 

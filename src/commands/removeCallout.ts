@@ -17,7 +17,6 @@ import {
   makeH6Line,
 } from "../utils/calloutTitleUtils";
 import { makeCalloutSelectionCheckCallback } from "../utils/editorCheckCallbackUtils";
-import { throwNever } from "../utils/errorUtils";
 import {
   getCalloutStartPos,
   getClearSelectionCursorStartAction,
@@ -170,8 +169,6 @@ export function getCursorOrSelectionActionAfterRemovingCallout({
         didRemoveHeaderLine,
       });
     }
-    default:
-      throwNever(afterRemovingCallout);
   }
 }
 

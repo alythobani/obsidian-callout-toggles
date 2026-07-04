@@ -1,7 +1,6 @@
 import type { PluginSettingsManager } from "../pluginSettingsManager";
 import type { EditorRange } from "obsidian";
 
-import { throwNever } from "./errorUtils";
 import { getTrimmedFirstCapturingGroupIfExists } from "./regexUtils";
 import { toSentenceCase } from "./stringUtils";
 
@@ -84,8 +83,6 @@ function makeCapitalizedCalloutID(
         .split("-")
         .map((word) => toSentenceCase(word))
         .join("-");
-    default:
-      throwNever(calloutIDCapitalization);
   }
 }
 
@@ -98,8 +95,6 @@ function makeFoldableSuffix(pluginSettingsManager: PluginSettingsManager): strin
       return "+";
     case "foldable-collapsed":
       return "-";
-    default:
-      throwNever(defaultFoldableState);
   }
 }
 

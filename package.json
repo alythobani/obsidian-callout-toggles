@@ -2,11 +2,11 @@
   "private": true,
   "type": "module",
   "name": "obsidian-callout-toggles",
-  "description": "An Obsidian plugin to quickly add, change, or remove callouts in your notes.",
+  "description": "An Obsidian plugin to instantly add, switch, or remove callouts in your notes.",
   "main": "./main.js",
   "author": "Aly Thobani",
   "license": "GPL-3.0-only",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "dependencies": {
     "obsidian": "^1.6.6",
     "obsidian-callout-manager": "^1.0.2-alpha1"
@@ -15,7 +15,7 @@
     "@eslint/js": "^9.10.0",
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.5.5",
-    "@vitest/ui": "^2.1.8",
+    "@vitest/ui": "^4.1.9",
     "eslint": "^9.10.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-unused-imports": "^4.4.1",
@@ -23,7 +23,7 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.62.0",
-    "vitest": "^2.1.8",
+    "vitest": "^4.1.9",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4"
   },

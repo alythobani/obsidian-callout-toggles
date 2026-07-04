@@ -6,6 +6,7 @@
     "strict": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
     "exactOptionalPropertyTypes": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

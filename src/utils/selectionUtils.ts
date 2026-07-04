@@ -2,7 +2,6 @@ import type { NonEmptyStringArray } from "./arrayUtils";
 import type { Editor, EditorPosition, EditorRange } from "obsidian";
 
 import { getLastElement } from "./arrayUtils";
-import { throwNever } from "./errorUtils";
 import { clamp } from "./numberUtils";
 
 export type SelectedLinesDiff = {
@@ -216,8 +215,6 @@ export function runCursorOrSelectionAction({
       clearSelectionAndSetCursor({ editor, newCursor: action.newCursor });
       return;
     }
-    default:
-      throwNever(action);
   }
 }
 
